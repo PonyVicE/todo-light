@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %} — Сегодня{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Сегодня</h1>
+  <div class="subtitle">
+    <i class="bi bi-calendar3"></i> {{ today }} &mdash; 
+    {% if tasks %}{{ tasks|length }} задач на сегодня{% else %}нет задач на сегодня{% endif %}
+  </div>
+</div>
+
+<div class="col-lg-8 px-0">
+  <div class="card">
+    <div class="card-header-custom">
+      <i class="bi bi-sun" style="color: #f59e0b; font-size:15px;"></i>
+      <h5>Задачи на сегодня</h5>
+      <span class="count-badge">{{ tasks|length }}</span>
+    </div>
+
+    {% if tasks %}
+      {% for task in tasks %}
+      <div class="task-item">
+        <div class="task-check">
+          <form method="post" action="/complete/{{ task.id }}">
+            <button type="submit" class="{% if task.is_completed %}completed{% endif %}"></button>
+          </form>
+        </div>
+
+        <div class="task-body">
+          <div class="task-title {% if task.is_completed %}done{% endif %}">
+            {{ task.title }}
+            {% if task.is_important %}
+              <span style="color:#c9a84c;font-size:13px;"><i class="bi bi-star-fill"></i></span>
+            {% endif %}
+          </div>
+          {% if task.note %}
+            <div class="task-note">{{ task.note }}</div>
+          {% endif %}
+          <div class="task-meta">
+            <span class="meta-chip today"><i class="bi bi-sun-fill"></i> Сегодня</span>
+            {% if task.is_important %}
+              <span class="meta-chip important"><i class="bi bi-star-fill"></i> Важное</span>
+            {% endif %}
+            {% if task.is_completed %}
+              <span class="meta-chip" style="border-color:#86efac;color:#166534;background:#f0fdf4;">
+                <i class="bi bi-check2"></i> Выполнено
+              </span>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="task-actions">
+          <form method="post" action="/delete/{{ task.id }}" onsubmit="return confirm('Удалить задачу?')">
+            <button type="submit" class="btn-icon" title="Удалить">
+              <i class="bi bi-trash3"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty-state">
+        <div class="empty-icon"><i class="bi bi-sun"></i></div>
+        <p>На сегодня задач нет.<br>
+          <a href="/dashboard" style="color:var(--accent);text-decoration:none;font-weight:500;">Добавить задачу →</a>
+        </p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<div style="margin-top:20px;">
+  <a href="/dashboard" style="font-size:13.5px;color:var(--ink-muted);text-decoration:none;display:inline-flex;align-items:center;gap:5px;">
+    <i class="bi bi-arrow-left"></i> Перейти ко всем задачам
+  </a>
+</div>
+{% endblock %}

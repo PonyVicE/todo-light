@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% block title %} — Настройки{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Настройки</h1>
+  <div class="subtitle">Информация о приложении и статистика</div>
+</div>
+
+<div class="row g-4">
+  <!-- Stats -->
+  <div class="col-12">
+    <div class="row g-3">
+      <div class="col-sm-4">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#f0f4ff;">
+            <i class="bi bi-list-check" style="color:#6366f1;"></i>
+          </div>
+          <div>
+            <div class="stat-value">{{ total }}</div>
+            <div class="stat-label">Всего задач</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#f0fdf4;">
+            <i class="bi bi-check2-all" style="color:#22c55e;"></i>
+          </div>
+          <div>
+            <div class="stat-value">{{ completed }}</div>
+            <div class="stat-label">Выполнено</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#fffbeb;">
+            <i class="bi bi-star-fill" style="color:#c9a84c;"></i>
+          </div>
+          <div>
+            <div class="stat-value">{{ important }}</div>
+            <div class="stat-label">Важных</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- App info -->
+  <div class="col-lg-6">
+    <div class="card">
+      <div class="card-header-custom">
+        <i class="bi bi-info-circle" style="color:var(--ink-muted);font-size:15px;"></i>
+        <h5>О приложении</h5>
+      </div>
+      <div style="padding: 20px 24px; font-size:14px; line-height:1.7; color:var(--ink-muted);">
+        <table style="width:100%; border-collapse:collapse;">
+          <tr>
+            <td style="padding:6px 0;font-weight:500;color:var(--ink);width:40%;">Название</td>
+            <td style="padding:6px 0;">Todo Light</td>
+          </tr>
+          <tr>
+            <td style="padding:6px 0;font-weight:500;color:var(--ink);">Версия</td>
+            <td style="padding:6px 0; font-family:'DM Mono',monospace;">1.0.0-mvp</td>
+          </tr>
+          <tr>
+            <td style="padding:6px 0;font-weight:500;color:var(--ink);">Бэкенд</td>
+            <td style="padding:6px 0;">FastAPI + Uvicorn</td>
+          </tr>
+          <tr>
+            <td style="padding:6px 0;font-weight:500;color:var(--ink);">Шаблоны</td>
+            <td style="padding:6px 0;">Jinja2 + Bootstrap 5</td>
+          </tr>
+          <tr>
+            <td style="padding:6px 0;font-weight:500;color:var(--ink);">Хранилище</td>
+            <td style="padding:6px 0; font-family:'DM Mono',monospace;">data.json</td>
+          </tr>
+          <tr>
+            <td style="padding:6px 0;font-weight:500;color:var(--ink);">Учебная работа</td>
+            <td style="padding:6px 0;">ПР-04, MVP</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings stub -->
+  <div class="col-lg-6">
+    <div class="card">
+      <div class="card-header-custom">
+        <i class="bi bi-gear" style="color:var(--ink-muted);font-size:15px;"></i>
+        <h5>Параметры</h5>
+      </div>
+      <div style="padding: 20px 24px;">
+
+        <div style="margin-bottom:20px;">
+          <div class="form-label">Хранилище данных</div>
+          <div style="background:var(--cream);border:1px solid var(--border);border-radius:7px;padding:10px 14px;font-size:13px;font-family:'DM Mono',monospace;color:var(--ink-muted);">
+            ./data.json
+          </div>
+          <div style="font-size:12px;color:var(--ink-muted);margin-top:5px;">Файл хранится в корне проекта</div>
+        </div>
+
+        <div style="margin-bottom:20px;">
+          <div class="form-label">Экраны приложения</div>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            {% for route, label in [("/dashboard","Все задачи"), ("/today","Сегодня"), ("/important","Важное"), ("/settings","Настройки")] %}
+            <div style="display:flex;align-items:center;justify-content:space-between;background:var(--cream);border:1px solid var(--border);border-radius:7px;padding:8px 14px;">
+              <span style="font-size:13px;color:var(--ink);">{{ label }}</span>
+              <code style="font-size:12px;color:var(--ink-muted);">{{ route }}</code>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div style="padding:12px 16px;background:#f0f4ff;border:1px solid #c7d2fe;border-radius:7px;font-size:13px;color:#4338ca;line-height:1.5;">
+          <i class="bi bi-info-circle-fill" style="margin-right:6px;"></i>
+          Настройки сохранения и темы будут добавлены в следующей версии.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

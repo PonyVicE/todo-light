@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Todo Light{% block title %}{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <style>
+    :root {
+      --cream: #f7f5f0;
+      --ink: #1a1a1a;
+      --ink-muted: #6b6b6b;
+      --accent: #e8523a;
+      --accent-soft: #fdecea;
+      --gold: #c9a84c;
+      --gold-soft: #fdf6e3;
+      --border: #e2ddd6;
+      --card-bg: #ffffff;
+      --sidebar-w: 220px;
+      --radius: 10px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+      margin: 0;
+      min-height: 100vh;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      position: fixed;
+      top: 0; left: 0;
+      width: var(--sidebar-w);
+      height: 100vh;
+      background: var(--ink);
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      z-index: 100;
+    }
+
+    .sidebar-brand {
+      padding: 28px 24px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .sidebar-brand .logo-mark {
+      width: 32px; height: 32px;
+      background: var(--accent);
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 10px;
+    }
+
+    .sidebar-brand .logo-mark i { color: #fff; font-size: 16px; }
+
+    .sidebar-brand .brand-name {
+      display: block;
+      font-size: 15px;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: 0.01em;
+    }
+
+    .sidebar-brand .brand-sub {
+      font-size: 11px;
+      color: rgba(255,255,255,0.4);
+      font-family: 'DM Mono', monospace;
+      letter-spacing: 0.05em;
+    }
+
+    .sidebar-nav {
+      padding: 16px 12px;
+      flex: 1;
+    }
+
+    .nav-label {
+      font-size: 10px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.3);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0 12px;
+      margin-bottom: 8px;
+      margin-top: 8px;
+    }
+
+    .sidebar-nav .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: 7px;
+      color: rgba(255,255,255,0.55);
+      font-size: 14px;
+      font-weight: 400;
+      text-decoration: none;
+      transition: all 0.15s;
+      margin-bottom: 2px;
+    }
+
+    .sidebar-nav .nav-link i {
+      font-size: 16px;
+      width: 18px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .sidebar-nav .nav-link:hover {
+      background: rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.85);
+    }
+
+    .sidebar-nav .nav-link.active {
+      background: var(--accent);
+      color: #fff;
+      font-weight: 500;
+    }
+
+    .sidebar-footer {
+      padding: 16px 24px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      font-size: 11px;
+      color: rgba(255,255,255,0.2);
+      font-family: 'DM Mono', monospace;
+    }
+
+    /* ── Main content ── */
+    .main-content {
+      margin-left: var(--sidebar-w);
+      min-height: 100vh;
+      padding: 40px 40px 60px;
+    }
+
+    .page-header {
+      margin-bottom: 32px;
+    }
+
+    .page-header h1 {
+      font-size: 26px;
+      font-weight: 600;
+      margin: 0 0 4px;
+      letter-spacing: -0.02em;
+    }
+
+    .page-header .subtitle {
+      font-size: 14px;
+      color: var(--ink-muted);
+    }
+
+    /* ── Cards ── */
+    .card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--card-bg);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+
+    .card-header-custom {
+      padding: 18px 24px 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-header-custom h5 {
+      font-size: 14px;
+      font-weight: 600;
+      margin: 0;
+      letter-spacing: 0.01em;
+    }
+
+    .card-header-custom .count-badge {
+      font-size: 11px;
+      font-weight: 500;
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2px 8px;
+      color: var(--ink-muted);
+      font-family: 'DM Mono', monospace;
+    }
+
+    /* ── Task items ── */
+    .task-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 14px 24px;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.1s;
+    }
+
+    .task-item:last-child { border-bottom: none; }
+    .task-item:hover { background: #fafaf8; }
+
+    .task-check form { margin: 0; }
+
+    .task-check button {
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      background: transparent;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+      flex-shrink: 0;
+      margin-top: 2px;
+      padding: 0;
+    }
+
+    .task-check button:hover { border-color: var(--accent); }
+    .task-check button.completed { background: #22c55e; border-color: #22c55e; }
+    .task-check button.completed::after {
+      content: '';
+      width: 5px; height: 9px;
+      border: 2px solid #fff;
+      border-top: none; border-left: none;
+      transform: rotate(45deg) translate(-1px,-1px);
+    }
+
+    .task-body { flex: 1; min-width: 0; }
+
+    .task-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--ink);
+      margin-bottom: 3px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .task-title.done {
+      text-decoration: line-through;
+      color: var(--ink-muted);
+    }
+
+    .task-note {
+      font-size: 12.5px;
+      color: var(--ink-muted);
+      margin-top: 2px;
+    }
+
+    .task-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 5px;
+      flex-wrap: wrap;
+    }
+
+    .meta-chip {
+      font-size: 11px;
+      font-family: 'DM Mono', monospace;
+      padding: 2px 8px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      color: var(--ink-muted);
+      background: var(--cream);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .meta-chip.important {
+      border-color: #fbbf24;
+      color: #92400e;
+      background: #fffbeb;
+    }
+
+    .meta-chip.overdue {
+      border-color: #fca5a5;
+      color: #991b1b;
+      background: #fef2f2;
+    }
+
+    .meta-chip.today {
+      border-color: #6ee7b7;
+      color: #065f46;
+      background: #ecfdf5;
+    }
+
+    .task-actions {
+      display: flex;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .task-actions form { margin: 0; }
+
+    .btn-icon {
+      width: 28px; height: 28px;
+      padding: 0;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: transparent;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px;
+      color: var(--ink-muted);
+      transition: all 0.15s;
+    }
+
+    .btn-icon:hover { border-color: #fca5a5; color: var(--accent); background: #fef2f2; }
+
+    /* ── Form ── */
+    .form-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--ink-muted);
+      margin-bottom: 5px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .form-control, .form-select {
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      font-size: 14px;
+      font-family: 'DM Sans', sans-serif;
+      background: #fff;
+      color: var(--ink);
+      padding: 8px 12px;
+      transition: border-color 0.15s;
+    }
+
+    .form-control:focus, .form-select:focus {
+      border-color: var(--ink);
+      box-shadow: none;
+      outline: none;
+    }
+
+    textarea.form-control { resize: none; }
+
+    .form-check-input {
+      border: 1.5px solid var(--border);
+      border-radius: 4px;
+      width: 16px; height: 16px;
+      margin-top: 2px;
+    }
+
+    .form-check-input:checked {
+      background-color: var(--gold);
+      border-color: var(--gold);
+    }
+
+    .form-check-label {
+      font-size: 14px;
+      color: var(--ink);
+    }
+
+    .btn-primary-custom {
+      background: var(--ink);
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 9px 20px;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: 'DM Sans', sans-serif;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-primary-custom:hover { background: #333; }
+
+    /* ── Empty state ── */
+    .empty-state {
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--ink-muted);
+    }
+
+    .empty-state .empty-icon {
+      font-size: 36px;
+      margin-bottom: 12px;
+      opacity: 0.3;
+    }
+
+    .empty-state p { font-size: 14px; margin: 0; }
+
+    /* ── Alert ── */
+    .alert-custom {
+      background: #fef2f2;
+      border: 1px solid #fca5a5;
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      font-size: 13.5px;
+      color: #991b1b;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    /* ── Stats ── */
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .stat-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      font-family: 'DM Mono', monospace;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--ink-muted);
+      margin-top: 3px;
+    }
+
+    /* ── Mobile ── */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        flex-direction: row;
+        flex-wrap: wrap;
+      }
+      .sidebar-brand { padding: 16px 20px; border-bottom: none; border-right: 1px solid rgba(255,255,255,0.08); }
+      .sidebar-nav { display: flex; flex-direction: row; padding: 10px; gap: 4px; flex-wrap: wrap; }
+      .sidebar-nav .nav-link { padding: 7px 10px; font-size: 13px; }
+      .sidebar-footer { display: none; }
+      .main-content { margin-left: 0; padding: 20px 16px 40px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <div class="logo-mark"><i class="bi bi-check2-square"></i></div>
+    <span class="brand-name">Todo Light</span>
+    <span class="brand-sub">MVP v1.0</span>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-label">Навигация</div>
+    <a href="/dashboard" class="nav-link {% if active == 'dashboard' %}active{% endif %}">
+      <i class="bi bi-grid-1x2"></i> Все задачи
+    </a>
+    <a href="/today" class="nav-link {% if active == 'today' %}active{% endif %}">
+      <i class="bi bi-sun"></i> Сегодня
+    </a>
+    <a href="/important" class="nav-link {% if active == 'important' %}active{% endif %}">
+      <i class="bi bi-star"></i> Важное
+    </a>
+    <a href="/settings" class="nav-link {% if active == 'settings' %}active{% endif %}">
+      <i class="bi bi-gear"></i> Настройки
+    </a>
+  </div>
+  <div class="sidebar-footer">todo-light &copy; 2026</div>
+</nav>
+
+<!-- Content -->
+<main class="main-content">
+  {% block content %}{% endblock %}
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

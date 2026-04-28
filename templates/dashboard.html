@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% block title %} — Все задачи{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Все задачи</h1>
+  <div class="subtitle">{{ tasks|length }} задач всего &middot; {{ tasks|selectattr("is_completed")|list|length }} выполнено</div>
+</div>
+
+<!-- Error alert -->
+{% if error %}
+<div class="alert-custom">
+  <i class="bi bi-exclamation-circle"></i> {{ error }}
+</div>
+{% endif %}
+
+<div class="row g-4">
+  <!-- Task list -->
+  <div class="col-lg-7">
+    <div class="card">
+      <div class="card-header-custom">
+        <i class="bi bi-list-task" style="color: var(--ink-muted); font-size:15px;"></i>
+        <h5>Список задач</h5>
+        <span class="count-badge">{{ tasks|length }}</span>
+      </div>
+
+      {% if tasks %}
+        {% for task in tasks %}
+        <div class="task-item">
+          <!-- Checkbox -->
+          <div class="task-check">
+            <form method="post" action="/complete/{{ task.id }}">
+              <button type="submit" class="{% if task.is_completed %}completed{% endif %}" title="Отметить выполненной"></button>
+            </form>
+          </div>
+
+          <!-- Body -->
+          <div class="task-body">
+            <div class="task-title {% if task.is_completed %}done{% endif %}">
+              {{ task.title }}
+              {% if task.is_important %}
+                <span style="color: #c9a84c; font-size: 13px;" title="Важная"><i class="bi bi-star-fill"></i></span>
+              {% endif %}
+            </div>
+            {% if task.note %}
+              <div class="task-note">{{ task.note }}</div>
+            {% endif %}
+            <div class="task-meta">
+              {% if task.due_date %}
+                {% if task.due_date == today %}
+                  <span class="meta-chip today"><i class="bi bi-sun-fill"></i> Сегодня</span>
+                {% elif task.due_date < today %}
+                  <span class="meta-chip overdue"><i class="bi bi-exclamation-circle"></i> {{ task.due_date }}</span>
+                {% else %}
+                  <span class="meta-chip"><i class="bi bi-calendar3"></i> {{ task.due_date }}</span>
+                {% endif %}
+              {% endif %}
+              {% if task.is_important %}
+                <span class="meta-chip important"><i class="bi bi-star-fill"></i> Важное</span>
+              {% endif %}
+              {% if task.is_completed %}
+                <span class="meta-chip" style="border-color:#86efac;color:#166534;background:#f0fdf4;">
+                  <i class="bi bi-check2"></i> Выполнено
+                </span>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Delete -->
+          <div class="task-actions">
+            <form method="post" action="/delete/{{ task.id }}" onsubmit="return confirm('Удалить задачу?')">
+              <button type="submit" class="btn-icon" title="Удалить">
+                <i class="bi bi-trash3"></i>
+              </button>
+            </form>
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="empty-state">
+          <div class="empty-icon"><i class="bi bi-inbox"></i></div>
+          <p>Задач пока нет. Добавьте первую!</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Add task form -->
+  <div class="col-lg-5">
+    <div class="card">
+      <div class="card-header-custom">
+        <i class="bi bi-plus-circle" style="color: var(--ink-muted); font-size:15px;"></i>
+        <h5>Новая задача</h5>
+      </div>
+      <div style="padding: 20px 24px;">
+        <form method="post" action="/dashboard">
+
+          <div class="mb-3">
+            <label class="form-label" for="title">Название <span style="color:var(--accent)">*</span></label>
+            <input
+              type="text"
+              id="title"
+              name="title"
+              class="form-control"
+              placeholder="Что нужно сделать?"
+              maxlength="200"
+              required
+              autocomplete="off"
+            />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="due_date">Срок выполнения</label>
+            <input
+              type="date"
+              id="due_date"
+              name="due_date"
+              class="form-control"
+            />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="note">Заметка</label>
+            <textarea
+              id="note"
+              name="note"
+              class="form-control"
+              rows="3"
+              placeholder="Дополнительные детали..."
+            ></textarea>
+          </div>
+
+          <div class="mb-4">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="is_important" name="is_important" value="true" />
+              <label class="form-check-label" for="is_important">
+                <i class="bi bi-star" style="color:var(--gold);"></i> Пометить как важную
+              </label>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-primary-custom w-100">
+            <i class="bi bi-plus-lg"></i> Добавить задачу
+          </button>
+
+        </form>
+      </div>
+    </div>
+
+    <!-- Quick stats -->
+    <div class="row g-3 mt-1">
+      <div class="col-6">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#f0fdf4;">
+            <i class="bi bi-check2-all" style="color:#22c55e;"></i>
+          </div>
+          <div>
+            <div class="stat-value">{{ tasks|selectattr("is_completed")|list|length }}</div>
+            <div class="stat-label">Выполнено</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#fffbeb;">
+            <i class="bi bi-star-fill" style="color:var(--gold);"></i>
+          </div>
+          <div>
+            <div class="stat-value">{{ tasks|selectattr("is_important")|list|length }}</div>
+            <div class="stat-label">Важных</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
