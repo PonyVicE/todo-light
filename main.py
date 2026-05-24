@@ -4,6 +4,7 @@ from datetime import date, datetime
 from fastapi import FastAPI, Request, Form
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
+from amo_integration import send_task_to_amo
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
@@ -73,6 +74,20 @@ async def add_task(
     }
     tasks.append(task)
     save_tasks(tasks)
+
+    # ── Отправка в amoCRM ─────────────────────────────────────────────
+    # Отправляем данные, даже если отправка не удалась — задача уже сохранена
+    try:
+        send_task_to_amo(
+            task_title=title,
+            due_date=due_date,
+            is_important=is_important,
+            note=note
+        )
+    except Exception as e:
+        print(f"Ошибка при отправке в amoCRM: {e}")
+    # ───────────────────────────────────────────────────────────────────
+
     return RedirectResponse(url="/dashboard", status_code=303)
 
 

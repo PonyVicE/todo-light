@@ -4,7 +4,7 @@
     "title": "Подготовить отчёт по практической работе ПР-04",
     "due_date": "2026-04-28",
     "is_important": true,
-    "is_completed": false,
+    "is_completed": true,
     "note": "Включить таблицу соответствия атрибутов Task и скриншоты интерфейса",
     "created_at": "2026-04-25"
   },
@@ -25,5 +25,23 @@
     "is_completed": true,
     "note": null,
     "created_at": "2026-04-27"
+  },
+  {
+    "id": 5,
+    "title": "Тест",
+    "due_date": "2026-05-25",
+    "is_important": true,
+    "is_completed": false,
+    "note": "Тест",
+    "created_at": "2026-05-24"
+  },
+  {
+    "id": 6,
+    "title": "Тест2",
+    "due_date": "2026-05-25",
+    "is_important": true,
+    "is_completed": false,
+    "note": "Тест2",
+    "created_at": "2026-05-24"
   }
 ]
