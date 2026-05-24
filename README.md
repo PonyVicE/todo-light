@@ -28,14 +28,14 @@ pip install fastapi uvicorn jinja2 python-multipart requests
 
 ### 2. Настроить интеграцию с amoCRM
 
-В файле `amo_integration.py` укажи свои данные:
+В файле `amo_integration.py` нужно указать свои данные:
 
 ```python
-SUBDOMAIN = "terleev02"                     # твой субдомен в amoCRM
+SUBDOMAIN = "..."                     # твой субдомен в amoCRM
 TOKEN = "твой_долгоживущий_токен"           # Long‑lived token
-FIELD_DUE_DATE = 655727                     # ID поля «Срок выполнения»
-FIELD_IMPORTANT = 655729                    # ID поля «Важное»
-FIELD_NOTE = 655733                         # ID поля «Заметка»
+FIELD_DUE_DATE = 123                     # ID поля «Срок выполнения»
+FIELD_IMPORTANT = 123                    # ID поля «Важное»
+FIELD_NOTE = 123                         # ID поля «Заметка»
 ```
 
 ### 3. Запустить сервер
@@ -96,9 +96,9 @@ http://127.0.0.1:8000
 data = [{
     "name": "Тестовая задача",
     "custom_fields_values": [
-        {"field_id": 655727, "values": [{"value": "2026-05-25T00:00:00+03:00"}]},
-        {"field_id": 655729, "values": [{"value": "Да"}]},
-        {"field_id": 655733, "values": [{"value": "Проверка интеграции"}]}
+        {"field_id": 123, "values": [{"value": "2026-05-25T00:00:00+03:00"}]},
+        {"field_id": 123, "values": [{"value": "Да"}]},
+        {"field_id": 123, "values": [{"value": "Проверка интеграции"}]}
     ]
 }]
 ```
